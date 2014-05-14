@@ -50,7 +50,7 @@ class TreeStrategy extends Strategy {
         log.info("Root worker started, waiting for children")
         aggregateChildren { result =>
           val finalResult = result + value
-          log.info("Final result has been aggregated: {}, dispatching it", finalResult)
+          log.info("Final result has been aggregated: {}, propagating it", finalResult)
 
           sendTo(leftChild, finalResult)
           sendTo(rightChild, finalResult)
@@ -69,7 +69,7 @@ class TreeStrategy extends Strategy {
           sendTo(parent, tempResult)
 
           recvFrom(parent) { finalResult =>
-            log.info("Worker {} received final result {}, propagating to children", id, finalResult)
+            log.info("Worker {} received final result: {}, propagating to children", id, finalResult)
             sendTo(leftChild, finalResult)
             sendTo(rightChild, finalResult)
 

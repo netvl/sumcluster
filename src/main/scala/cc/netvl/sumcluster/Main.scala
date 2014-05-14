@@ -1,7 +1,7 @@
 package cc.netvl.sumcluster
 
 import akka.actor._
-import cc.netvl.sumcluster.strategies.{Strategy, TreeStrategy}
+import cc.netvl.sumcluster.strategies.{RingStrategy, Strategy, TreeStrategy}
 
 /**
  * Date: 14.05.14
@@ -13,12 +13,16 @@ object Main {
   def main(args: Array[String]) {
     implicit val system = ActorSystem("SumCluster")
 
-    val strategy = new TreeStrategy
+    val strategy = new RingStrategy
 
     val manager = system.actorOf(Props[ClusterManager], "clusterManager")
     val iface = system.actorOf(Props(new InterfaceActor(manager, strategy)), "interface")
 
     manager.tell(ClusterManager.Initialize(16, strategy), iface)
+
+    System.in.read()
+
+    system.shutdown()
   }
 
   class InterfaceActor(clusterManager: ActorRef, strategy: Strategy) extends Actor with ActorLogging {
@@ -31,7 +35,9 @@ object Main {
 
     def waiting(n: Int): Receive = {
       case ClusterManager.Done =>
-        log.info("Cluster has finished the operation, querying")
+        log.info("Cluster has finished the operation")
+        log.info("Accumulated sum in the strategy: {}", strategy.sum)
+        log.info("Querying nodes in the cluster")
         for (i <- 0 until n) clusterManager ! ClusterManager.Query(i)
         context become counting(n)
     }
@@ -42,8 +48,8 @@ object Main {
           if (result == strategy.sum) "seems to be okay"
           else s"differs from the actual sum (${strategy.sum})")
         if (n == 1) {
-          log.info("Queried all nodes, shutting down")
-          context.system.shutdown()
+          log.info("Queried all nodes, press enter to exit")
+
         } else {
           context become counting(n - 1)
         }

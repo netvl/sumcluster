@@ -4,10 +4,7 @@ import akka.actor.{Props, ActorRef}
 import scala.util.Random
 
 /**
- * Date: 14.05.14
- * Time: 21:40
- *
- * @author Vladimir Matveev
+ * A strategy with tree-like messages passing. High concurrency, high network usage.
  */
 class TreeStrategy extends Strategy {
   override val name = "binary tree"

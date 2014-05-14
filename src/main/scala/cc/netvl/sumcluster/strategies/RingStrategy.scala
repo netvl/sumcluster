@@ -4,10 +4,7 @@ import akka.actor.{Props, ActorRef}
 import scala.util.Random
 
 /**
- * Date: 15.05.14
- * Time: 0:02
- *
- * @author Vladimir Matveev
+ * A strategy with ring-like message passing. Low concurrency, low network usage.
  */
 class RingStrategy extends Strategy {
   override def name = "ring"
@@ -18,17 +15,14 @@ class RingStrategy extends Strategy {
   }
 
   override def initializeAndStart(workers: Seq[ActorRef], handler: ActorRef) = {
-    if (workers.size > 0) {
-      workers foreach (_ ! Initialize(workers, handler))
-      workers foreach (_ ! Start)
-    }
+    workers foreach (_ ! Initialize(workers, handler))
+    workers foreach (_ ! Start)
   }
 
   private case class Initialize(workers: Seq[ActorRef], handler: ActorRef)
   private case object Start
 
   class Node(override val id: Int, override val value: Int) extends BaseNode {
-
     def next(implicit w: Seq[_]) = if (id == w.size-1) 0 else id+1
     def prev(implicit w: Seq[_]) = if (id == 0) w.size-1 else id-1
 

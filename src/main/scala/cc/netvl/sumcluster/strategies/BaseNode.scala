@@ -3,20 +3,30 @@ package cc.netvl.sumcluster.strategies
 import akka.actor.{ActorLogging, Stash, ActorRef, Actor}
 
 /**
- * Date: 14.05.14
- * Time: 22:08
- *
- * @author Vladimir Matveev
+ * Base class for cluster nodes. Does its best to emulate synchronous interface from the original problem.
  */
 abstract class BaseNode extends Actor with Stash with ActorLogging {
   import BaseNode._
 
+  /**
+   * Identifier of the node.
+   */
   def id: Int
+
+  /**
+   * Initial value of the node.
+   */
   protected def value: Int
 
-  protected final def has(i: Int)(implicit workers: Seq[ActorRef]): Boolean =
-    0 <= i && i < workers.size
+  /**
+   * Checkes whether the given identifier of a worker is valid.
+   */
+  protected final def has(id: Int)(implicit workers: Seq[ActorRef]): Boolean =
+    0 <= id && id < workers.size
 
+  /**
+   * Asynchronously send a number to the given worker.
+   */
   protected final def sendTo(i: Int, value: Int)(implicit workers: Seq[ActorRef]): Boolean = {
     if (has(i)) {
       workers(i) ! Value(value)
@@ -24,6 +34,15 @@ abstract class BaseNode extends Actor with Stash with ActorLogging {
     } else false
   }
 
+  /**
+   * "Synchronously" receive a number from the given worker.
+   *
+   * Because Akka is principially asynchronous, this operation is also async and emulated
+   * via a callback and messages stashing.
+   *
+   * If a message is received from unexpected, it is stashed. Otherwise, all messages are unstashed,
+   * and the given callback is called, which can setup further actor behavior.
+   */
   protected final def recvFrom(i: Int)(action: Int => Unit)(implicit workers: Seq[ActorRef]) {
     context become {
       case Value(value) if sender() == workers(i) =>
@@ -35,6 +54,9 @@ abstract class BaseNode extends Actor with Stash with ActorLogging {
     }
   }
 
+  /**
+   * Switches to final state, notifying the handler and beginning to answer to queries.
+   */
   protected final def becomeDone(result: Int, handler: ActorRef) {
     log.info("Worker {} is done, result: {}", id, result)
 

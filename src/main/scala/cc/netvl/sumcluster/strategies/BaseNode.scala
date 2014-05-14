@@ -12,6 +12,7 @@ abstract class BaseNode extends Actor with Stash with ActorLogging {
   import BaseNode._
 
   def id: Int
+  protected def value: Int
 
   protected final def has(i: Int)(implicit workers: Seq[ActorRef]): Boolean =
     0 <= i && i < workers.size
@@ -39,8 +40,11 @@ abstract class BaseNode extends Actor with Stash with ActorLogging {
 
     handler ! Strategy.Done(id)
     context become {
-      case Strategy.Query(originalSender) =>
-        sender ! Strategy.QueryResult(result, id, originalSender)
+      case Strategy.QueryResult(originalSender) =>
+        sender() ! Strategy.QueryResultResponse(result, id, originalSender)
+
+      case Strategy.QueryValue(originalSender) =>
+        sender() ! Strategy.QueryValueResponse(value, id, originalSender)
     }
   }
 }

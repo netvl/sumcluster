@@ -19,7 +19,7 @@ class ClusterManager extends Actor with ActorLogging {
                     handler: Option[ActorRef]): Receive = {
     case Start =>
       log.info("Starting the operation")
-      strategy.start(workers, self)
+      strategy.initializeAndStart(workers, self)
       context become ready(workers, strategy, remaining, Some(sender()))
 
     case Strategy.Done(i) =>
@@ -32,13 +32,21 @@ class ClusterManager extends Actor with ActorLogging {
   }
 
   private def done(workers: Seq[ActorRef]): Receive = {
-    case Query(id) =>
+    case QueryResult(id) =>
       if (0 <= id && id < workers.size) {
-        workers(id) ! Strategy.Query(sender())
+        workers(id) ! Strategy.QueryResult(sender())
       }
 
-    case Strategy.QueryResult(result, id, originalSender) =>
-      originalSender ! QueryResult(id, result)
+    case Strategy.QueryResultResponse(result, id, originalSender) =>
+      originalSender ! QueryResultResponse(id, result)
+
+    case QueryValue(id) =>
+      if (0 <= id && id < workers.size) {
+        workers(id) ! Strategy.QueryValue(sender())
+      }
+
+    case Strategy.QueryValueResponse(value, id, originalSender) =>
+      originalSender ! QueryValueResponse(id, value)
   }
 }
 
@@ -51,7 +59,10 @@ object ClusterManager {
   case object Start extends Message
   case object Done extends Message
 
-  case class Query(i: Int) extends Message
-  case class QueryResult(i: Int, result: Int) extends Message
+  case class QueryResult(id: Int) extends Message
+  case class QueryResultResponse(id: Int, result: Int) extends Message
+
+  case class QueryValue(id: Int) extends Message
+  case class QueryValueResponse(id: Int, value: Int) extends Message
 }
 

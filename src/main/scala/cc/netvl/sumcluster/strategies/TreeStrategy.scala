@@ -14,11 +14,10 @@ class TreeStrategy extends Strategy {
 
   override def workerProps(i: Int) = {
     val n = Random.nextInt(100)
-    _sum += n
     Props(new Node(i, n))
   }
 
-  override def start(workers: Seq[ActorRef], handler: ActorRef) = {
+  override def initializeAndStart(workers: Seq[ActorRef], handler: ActorRef) = {
     workers foreach (_ ! Initialize(workers, handler))
     workers foreach (_ ! Start)
   }
@@ -26,7 +25,7 @@ class TreeStrategy extends Strategy {
   private case class Initialize(workers: Seq[ActorRef], handler: ActorRef)
   private case object Start
 
-  class Node(override val id: Int, value: Int) extends BaseNode {
+  class Node(override val id: Int, override val value: Int) extends BaseNode {
     val parent: Int = (id-1)/2
     val leftChild: Int = 2*id + 1
     val rightChild: Int = 2*id + 2

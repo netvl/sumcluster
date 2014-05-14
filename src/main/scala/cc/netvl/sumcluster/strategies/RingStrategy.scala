@@ -14,11 +14,10 @@ class RingStrategy extends Strategy {
 
   override def workerProps(i: Int) = {
     val n = Random.nextInt(100)
-    _sum += n
     Props(new Node(i, n))
   }
 
-  override def start(workers: Seq[ActorRef], handler: ActorRef) = {
+  override def initializeAndStart(workers: Seq[ActorRef], handler: ActorRef) = {
     if (workers.size > 0) {
       workers foreach (_ ! Initialize(workers, handler))
       workers foreach (_ ! Start)
@@ -28,7 +27,7 @@ class RingStrategy extends Strategy {
   private case class Initialize(workers: Seq[ActorRef], handler: ActorRef)
   private case object Start
 
-  class Node(override val id: Int, value: Int) extends BaseNode {
+  class Node(override val id: Int, override val value: Int) extends BaseNode {
 
     def next(implicit w: Seq[_]) = if (id == w.size-1) 0 else id+1
     def prev(implicit w: Seq[_]) = if (id == 0) w.size-1 else id-1

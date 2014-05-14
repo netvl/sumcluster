@@ -10,12 +10,8 @@ import akka.actor.{ActorRef, Props}
  */
 trait Strategy {
   def name: String
-
-  protected final var _sum: Int = 0
-  def sum = _sum
-
   def workerProps(i: Int): Props
-  def start(workers: Seq[ActorRef], handler: ActorRef)
+  def initializeAndStart(workers: Seq[ActorRef], handler: ActorRef)
 }
 
 object Strategy {
@@ -23,6 +19,9 @@ object Strategy {
 
   case class Done(i: Int) extends Message
 
-  case class Query(originalSender: ActorRef) extends Message
-  case class QueryResult(result: Int, id: Int, originalSender: ActorRef) extends Message
+  case class QueryResult(originalSender: ActorRef) extends Message
+  case class QueryResultResponse(result: Int, id: Int, originalSender: ActorRef) extends Message
+  
+  case class QueryValue(originalSender: ActorRef) extends Message
+  case class QueryValueResponse(value: Int, id: Int, originalSender: ActorRef) extends Message
 }

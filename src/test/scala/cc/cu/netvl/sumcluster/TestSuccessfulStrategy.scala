@@ -4,10 +4,6 @@ import cc.cu.netvl.sumcluster.strategies.Strategy
 import akka.actor.{Actor, Props, ActorRef}
 import scala.collection.mutable
 
-/**
- * Date: 15.05.2014
- * Time: 11:15
- */
 class TestSuccessfulStrategy(n: Int) extends Strategy {
   override def name = "test strategy"
 

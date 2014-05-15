@@ -10,7 +10,7 @@ object Main {
   def main(args: Array[String]) {
     implicit val system = ActorSystem("SumCluster")
 
-    val strategy = new RingStrategy  // select the strategy
+    val strategy = RingStrategy  // select the strategy
 
     // Create main actors
     val manager = system.actorOf(Props[ClusterManager], "clusterManager")

@@ -6,7 +6,7 @@ import scala.util.Random
 /**
  * A strategy with ring-like message passing. Low concurrency, low network usage.
  */
-class RingStrategy extends Strategy {
+object RingStrategy extends Strategy {
   override def name = "ring"
 
   override def workerProps(i: Int) = {

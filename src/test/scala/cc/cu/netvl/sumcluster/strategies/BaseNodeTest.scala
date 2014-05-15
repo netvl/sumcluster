@@ -1,18 +1,18 @@
 package cc.cu.netvl.sumcluster.strategies
 
-import akka.testkit.{TestActorRef, TestActor, ImplicitSender, TestKit}
-import akka.actor.{ActorRef, Props, Actor, ActorSystem}
+import akka.testkit.{TestActorRef, ImplicitSender, TestKit}
+import akka.actor.{ActorRef, Props, ActorSystem}
 import org.scalatest.{BeforeAndAfterAll, ShouldMatchers, FlatSpecLike}
 import scala.collection.mutable
 import scala.util.Random
 
-/**
- * Date: 15.05.2014
- * Time: 13:04
- */
 class BaseNodeTest
   extends TestKit(ActorSystem("baseNodeTest")) with ImplicitSender
   with FlatSpecLike with ShouldMatchers with BeforeAndAfterAll {
+
+  override protected def afterAll() {
+    TestKit.shutdownActorSystem(system)
+  }
 
   "BaseNode" should "perform sendTo operation asynchronously" in {
     implicit val workers = mutable.Buffer.empty[ActorRef]

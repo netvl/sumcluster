@@ -4,9 +4,9 @@ import akka.actor.{Props, ActorRef}
 import scala.util.Random
 
 /**
- * A strategy with tree-like messages passing. High concurrency, high network usage.
+ * A strategy with tree-like message passing. High concurrency, high network usage.
  */
-class TreeStrategy extends Strategy {
+object TreeStrategy extends Strategy {
   override val name = "binary tree"
 
   override def workerProps(i: Int) = {
@@ -34,6 +34,9 @@ class TreeStrategy extends Strategy {
     }
 
     def aggregateChildren(callback: Int => Unit)(implicit workers: Seq[ActorRef]) {
+      // It is safe not to call a check from right child if there is no left child:
+      // our binary tree is "almost complete", it means that any node has either no children,
+      // only left one or both; no other states possible
       if (has(leftChild)) recvFrom(leftChild) { n1 =>
         if (has(rightChild)) recvFrom(rightChild) { n2 =>
           callback(n1 + n2)

@@ -4,10 +4,6 @@ import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, ShouldMatchers}
 import akka.testkit.{ImplicitSender, TestKit, TestActorRef}
 import akka.actor.{Props, ActorSystem}
 
-/**
- * Date: 15.05.2014
- * Time: 11:08
- */
 class ClusterManagerTest
   extends TestKit(ActorSystem("clusterManagerTest")) with ImplicitSender
   with FlatSpecLike with ShouldMatchers with BeforeAndAfterAll {

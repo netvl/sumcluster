@@ -13,7 +13,7 @@ class ClusterManager extends Actor with ActorLogging {
     case Initialize(n, strategy) =>
       log.info("Initializing {} workers with strategy: {}", n, strategy.name)
       val workers = for (i <- 0 until n) yield context.actorOf(strategy.workerProps(i), s"worker-$i")
-      sender ! Initialized(n)
+      sender() ! Initialized(n)
       log.info("Ready to start")
       context become ready(workers, strategy, n, None)
   }

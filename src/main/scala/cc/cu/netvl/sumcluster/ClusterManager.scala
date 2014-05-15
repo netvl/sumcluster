@@ -1,7 +1,7 @@
-package cc.netvl.sumcluster
+package cc.cu.netvl.sumcluster
 
 import akka.actor.{ActorLogging, ActorRef, Actor}
-import cc.netvl.sumcluster.strategies.Strategy
+import cc.cu.netvl.sumcluster.strategies.Strategy
 
 /**
  * Cluster manager actor. Controls and provides access to the cluster of worker nodes.

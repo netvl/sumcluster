@@ -1,7 +1,7 @@
-package cc.netvl.sumcluster
+package cc.cu.netvl.sumcluster
 
 import akka.actor._
-import cc.netvl.sumcluster.strategies.{RingStrategy, Strategy, TreeStrategy}
+import cc.cu.netvl.sumcluster.strategies.{RingStrategy, Strategy, TreeStrategy}
 
 /**
  * Entry point, contains actor system initialization code and "UI" actor.

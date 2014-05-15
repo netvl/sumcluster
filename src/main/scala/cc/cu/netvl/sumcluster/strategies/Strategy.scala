@@ -1,4 +1,4 @@
-package cc.netvl.sumcluster.strategies
+package cc.cu.netvl.sumcluster.strategies
 
 import akka.actor.{ActorRef, Props}
 

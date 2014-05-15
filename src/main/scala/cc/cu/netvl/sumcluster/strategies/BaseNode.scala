@@ -40,7 +40,7 @@ abstract class BaseNode extends Actor with Stash with ActorLogging {
    * Because Akka is principially asynchronous, this operation is also async and emulated
    * via a callback and messages stashing.
    *
-   * If a message is received from unexpected, it is stashed. Otherwise, all messages are unstashed,
+   * If a message is received from unexpected node, it is stashed. Otherwise, all messages are unstashed,
    * and the given callback is called, which can setup further actor behavior.
    */
   protected final def recvFrom(i: Int)(action: Int => Unit)(implicit workers: Seq[ActorRef]) {

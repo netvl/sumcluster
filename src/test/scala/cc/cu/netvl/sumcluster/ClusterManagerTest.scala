@@ -15,7 +15,7 @@ class ClusterManagerTest
   override protected def afterAll() {
     TestKit.shutdownActorSystem(system)
   }
-
+  
   "ClusterManager" should "create children with the specified strategy" in {
     val strategy = new TestSuccessfulStrategy(8)
 
